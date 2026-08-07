@@ -76,7 +76,11 @@ final class CallTranscriber: ObservableObject {
         Task {
             do {
                 try await capture.start()
-                if statusText == "Starting capture…" { statusText = "" }
+                // Chunks are 8–12s, so an empty window for the first ~10s is normal and
+                // otherwise indistinguishable from a dead capture. Cleared by the first line.
+                if statusText == "Starting capture…" {
+                    statusText = "Listening… first line appears after ~10s of speech."
+                }
             } catch {
                 finish()
                 statusText = error.localizedDescription
